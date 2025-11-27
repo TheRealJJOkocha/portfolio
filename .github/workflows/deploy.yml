@@ -1,9 +1,9 @@
 name: Deploy
 
 on:
-  workflow_dispatch: # Manual trigger
   push:
-    branches: [main]
+    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,20 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: typst-community/setup-typst@v4
-      - uses: actions/setup-go@v6
-        with:
-          cache: false
-      - run: go install github.com/tdewolff/minify/v2/cmd/minify@v2.24.7
-      # NOTE: Remove `cd template` step when deploying template from Typst Universe
-      - run: |
-          make link
-          cd template
-          make html
-          minify --recursive --inplace _site/
+      - run: make html
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: template/_site
+          path: _site
 
   # Publish to GitHub Pages
   deploy:
